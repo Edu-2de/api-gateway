@@ -1,4 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 
-@Module({})
+@Module({
+  imports: [],
+  providers: [],
+  exports: [],
+})
 export class ProxyModule {}
