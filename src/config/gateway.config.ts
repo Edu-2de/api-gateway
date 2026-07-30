@@ -1,18 +1,22 @@
-export const serviceConfig = {
-  users: {
-    url: process.env.USERS_SERVICE_URL || 'http://localhost:3000',
-    timeout: 10000,
-  },
-  products: {
-    url: process.env.PRODUCTS_SERVICE_URL || 'http://localhost:3001',
-    timeout: 10000,
-  },
-  checkout: {
-    url: process.env.CHECKOUT_SERVICE_URL || 'http://localhost:3003',
-    timeout: 10000,
-  },
-  payments: {
-    url: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3004',
-    timeout: 10000,
-  },
-} as const
+import { EnvService } from '../env/env.service'
+
+export function serviceConfig(env: EnvService) {
+  return {
+    users: {
+      url: env.get('USERS_SERVICE_URL'),
+      timeout: 10000,
+    },
+    products: {
+      url: env.get('PRODUCTS_SERVICE_URL'),
+      timeout: 10000,
+    },
+    checkout: {
+      url: env.get('CHECKOUT_SERVICE_URL'),
+      timeout: 10000,
+    },
+    payments: {
+      url: env.get('PAYMENTS_SERVICE_URL'),
+      timeout: 10000,
+    },
+  } as const
+}
