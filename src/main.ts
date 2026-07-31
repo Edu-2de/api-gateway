@@ -9,16 +9,55 @@ import { Env } from './env/env'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+      crossOriginEmbedderPolicy: false,
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+    }),
+  )
 
   const configService = app.get<ConfigService<Env, true>>(ConfigService)
   const port = configService.get('PORT', { infer: true }) || 3005
   const corsOrigin = configService.get('CORS_ORIGIN', { infer: true }) || '*'
 
   app.enableCors({
-    origin: corsOrigin,
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin) return callback(null, true)
+      const allowedOrigins = corsOrigin?.split(',') || ['*']
+
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accpet',
+      'Origin',
+      'Access-Control-Request-Method',
+      'Access-Control-Request-Headers',
+    ],
+    credentials: true,
+    maxAge: 86400, // 24 hours
   })
 
   app.useGlobalPipes(
