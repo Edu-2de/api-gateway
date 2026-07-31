@@ -8,6 +8,7 @@ import { EnvModule } from './env/env.module'
 import { LogginMiddleware } from './middleware/loggin.middleware'
 import { MiddlewareModule } from './middleware/middleware.module'
 import { ProxyModule } from './proxy/proxy.module'
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProxyModule } from './proxy/proxy.module'
     EnvModule,
     ProxyModule,
     MiddlewareModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
