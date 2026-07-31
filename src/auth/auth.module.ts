@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { EnvModule } from '../env/env.module'
+import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
 @Module({
@@ -20,6 +21,7 @@ import { AuthService } from './auth.service'
       inject: [ConfigService],
     }),
   ],
+  controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],
 })
