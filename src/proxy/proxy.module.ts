@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
+import { EnvModule } from '../env/env.module'
 import { ProxyService } from './proxy.service'
 
 @Module({
-  imports: [],
+  imports: [EnvModule],
   providers: [ProxyService],
   exports: [ProxyService],
 })
