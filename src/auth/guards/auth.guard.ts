@@ -8,7 +8,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { Observable } from 'rxjs'
 
 @Injectable()
-export class JwtGuard extends AuthGuard() {
+export class JwtAuthGuard extends AuthGuard() {
   constructor(private reflector: Reflector) {
     super()
   }
@@ -16,7 +16,7 @@ export class JwtGuard extends AuthGuard() {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.getAllAndOverride<boolean>('IsPublic', [
+    const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
       context.getHandler(),
       context.getClass(),
     ])

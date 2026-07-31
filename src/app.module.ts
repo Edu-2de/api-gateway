@@ -1,13 +1,13 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ThrottlerModule } from '@nestjs/throttler'
+import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
-import { AppController } from './controllers/app.controller'
+import { LogginMiddleware } from './common/middlewares/loggin.middleware'
+import { MiddlewareModule } from './common/middlewares/middleware.module'
 import { envSchema } from './env/env'
 import { EnvModule } from './env/env.module'
-import { LogginMiddleware } from './middleware/loggin.middleware'
-import { MiddlewareModule } from './middleware/middleware.module'
 import { ProxyModule } from './proxy/proxy.module'
 
 @Module({

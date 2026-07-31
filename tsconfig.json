@@ -4,6 +4,9 @@
     "moduleResolution": "nodenext",
     "types": ["node", "jest"],
     "resolvePackageJsonExports": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "esModuleInterop": true,
     "isolatedModules": true,
     "declaration": true,
