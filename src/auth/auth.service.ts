@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt'
 import { firstValueFrom } from 'rxjs'
 import { serviceConfig } from '../config/gateway.config'
 import { EnvService } from '../env/env.service'
+import { LoginDto } from './dtos/login.dto'
+import { RegisterDto } from './dtos/register.dto'
 
 export interface UserSession {
   valid: boolean
@@ -50,10 +52,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: {
-    email: string
-    password: string
-  }): Promise<UserSession> {
+  async login(loginDto: LoginDto): Promise<UserSession> {
     try {
       const config = serviceConfig(this.envService)
       const service = config['users']
@@ -68,10 +67,7 @@ export class AuthService {
     }
   }
 
-  async register(registerDto: {
-    email: string
-    password: string
-  }): Promise<UserSession> {
+  async register(registerDto: RegisterDto): Promise<UserSession> {
     try {
       const config = serviceConfig(this.envService)
       const service = config['users']

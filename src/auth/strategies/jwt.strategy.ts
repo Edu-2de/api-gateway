@@ -7,6 +7,9 @@ export interface TokenPayload {
   sub: string
   email: string
   role: string
+  token: string
+  initiatedAt?: number
+  expireIn: number
 }
 
 @Injectable()
