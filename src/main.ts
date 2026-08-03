@@ -107,7 +107,12 @@ async function bootstrap() {
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
-  SwaggerModule.setup('api', app, document)
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {},
+    customSiteTitle: 'Marketplace API Gateway Documentation',
+    customfavIcon: '/favicon.ico',
+    customCss: `swagger-ui .topbar {display: none}`,
+  })
 
   await app.listen(port)
 

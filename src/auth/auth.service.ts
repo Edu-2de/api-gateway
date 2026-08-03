@@ -19,6 +19,17 @@ export interface UserSession {
   } | null
 }
 
+export interface AuthResponse {
+  accessToken: string
+  user: {
+    id: string
+    email: string
+    firstName: string
+    lastName: string
+    role: string
+  }
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -27,10 +38,9 @@ export class AuthService {
     private envService: EnvService,
   ) {}
 
-  async validateJwtToken(token: string): Promise<boolean> {
+  async validateJwtToken(token: string): Promise<AuthResponse> {
     try {
-      this.jwtService.verify(token)
-      return true
+      return this.jwtService.verify(token)
     } catch (error) {
       throw new UnauthorizedException('Invalid JWT token')
     }
@@ -52,7 +62,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto): Promise<UserSession> {
+  async login(loginDto: LoginDto): Promise<AuthResponse> {
     try {
       const config = serviceConfig(this.envService)
       const service = config['users']
@@ -67,7 +77,7 @@ export class AuthService {
     }
   }
 
-  async register(registerDto: RegisterDto): Promise<UserSession> {
+  async register(registerDto: RegisterDto): Promise<AuthResponse> {
     try {
       const config = serviceConfig(this.envService)
       const service = config['users']
