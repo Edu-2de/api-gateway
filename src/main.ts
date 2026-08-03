@@ -70,9 +70,40 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('MarketPlace Api Gateway')
-    .setDescription('Api Gateway for Marketplace Microservices')
+    .setDescription(`Api Gateway for Marketplace Microservices`)
     .setVersion('1.0')
-    .addBearerAuth()
+    .setContact(
+      'MarketPlace Team',
+      'https://marketplace.com',
+      'dev@marketplace.com',
+    )
+    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JwtAuthGuard',
+    )
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-session-token',
+        in: 'header',
+        description: 'Session token for user validation',
+      },
+      'session-auth',
+    )
+    .addTag('Authentication', 'Endpoints de autenticação')
+    .addTag('Users', 'Endpoints para gestão de usuários')
+    .addTag('Products', 'Endpoints para catálago de produtos')
+    .addTag('Checkout', 'Endpoints para carrinho e pedidos')
+    .addTag('Payments', 'Endpoints para processamento de pagamentos')
+    .addTag('Health', 'Endpoints para monitoramento de saúde')
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
