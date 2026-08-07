@@ -41,9 +41,9 @@ export class CircuitBreakerService {
       const result = await operation()
       this.onSuccess(circuit, key)
       return result
-    } catch (error: Err) {
-      this.onFailure(circuit, key)
-      this.logger.error(`Circuit breaker failure for ${key}:`, error.message)
+    } catch (error) {
+      this.onFailure(circuit, key, config)
+      this.logger.error(`Circuit breaker failure for ${key}:`, error)
       if (fallback) {
         this.logger.log(`Using fallback for ${key}`)
         return await fallback()
@@ -65,5 +65,40 @@ export class CircuitBreakerService {
       })
     }
     return this.circuits.get(key)!
+  }
+
+  private onSuccess(circuit: CircuitBreakerState, key: string): void {
+    circuit.failureCount = 0
+    circuit.state = CircuitBreakerStateEnum.CLOSE
+    this.logger.debug(`Circuit breaker SUCCESS fo ${key}, state: CLOSED`)
+  }
+
+  private onFailure(
+    circuit: CircuitBreakerState,
+    key: string,
+    options: CircuitBreakerOptions,
+  ): void {
+    circuit.failureCount++
+    circuit.lastFailureCount = Date.now()
+    if (circuit.failureCount >= options.failureThreshold) {
+      circuit.state = CircuitBreakerStateEnum.OPEN
+      circuit.nextAttemptTime = Date.now() + options.resetTimeout
+      this.logger.warn(
+        `Circuit breaker OPENED for ${key} after ${circuit.failureCount} failures`,
+      )
+    }
+  }
+
+  getCircuitState(key: string): CircuitBreakerState | undefined {
+    return this.circuits.get(key)
+  }
+
+  getAllCircuits(): Map<string, CircuitBreakerState> {
+    return new Map(this.circuits)
+  }
+
+  resetCircuit(key: string): void {
+    this.circuits.delete(key)
+    this.logger.log(`Circuit breaker RESET for ${key}`)
   }
 }
