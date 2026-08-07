@@ -4,7 +4,7 @@ export interface CircuitBreakerOptions {
   resetTimeout: number
 }
 
-enum CircuitBreakerStateEnum {
+export enum CircuitBreakerStateEnum {
   CLOSE = 'CLOSED',
   OPEN = 'OPEN',
   HALF_OPEN = 'HALF_OPEN',
