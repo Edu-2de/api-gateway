@@ -1,0 +1,25 @@
+export interface CircuitBreakerOptions {
+  failureThreshold: number
+  timeout: number
+  resetTimeout: number
+}
+
+enum CircuitBreakerStateEnum {
+  CLOSE = 'CLOSED',
+  OPEN = 'OPEN',
+  HALF_OPEN = 'HALF_OPEN',
+}
+
+export interface CircuitBreakerState {
+  state: CircuitBreakerStateEnum
+  failureCount: number
+  lastFailureCount: number
+  nextAttemptTime: number
+}
+
+export interface CircuitBreakerResult<T> {
+  success: boolean
+  data?: T
+  error?: Error
+  fromCache?: boolean
+}
