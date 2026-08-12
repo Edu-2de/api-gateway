@@ -1,3 +1,4 @@
+import { CircuitBreakerService } from '@/common/circuit-breaker/circuit-breaker.service'
 import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { Method } from 'axios'
@@ -18,6 +19,7 @@ export class ProxyService {
   constructor(
     private readonly httpService: HttpService,
     private readonly envService: EnvService,
+    private readonly circuitBreakerService: CircuitBreakerService,
   ) {}
 
   async proxyRequest(
@@ -34,30 +36,37 @@ export class ProxyService {
 
     this.logger.log(`Proxying ${method} request to ${serviceName}: ${url}`)
 
-    try {
-      const enhancedHeaders = {
-        ...headers,
-        'x-user-id': userInfo?.userId ?? '',
-        'x-user-email': userInfo?.email ?? '',
-        'x-user-role': userInfo?.role ?? '',
-      }
+    return this.circuitBreakerService.executeWithCircuitBreaker(
+      `proxy-${serviceName}`,
 
-      const response = await firstValueFrom(
-        this.httpService.request({
-          method,
-          url,
-          data,
-          headers: enhancedHeaders,
-          timeout: service.timeout,
-        }),
-      )
-      return response
-    } catch (error) {
-      this.logger.error(
-        `Error proxying ${method} request to ${serviceName}: ${url}`,
-      )
-      throw error
-    }
+      { failureThreshold: 3, timeout: 30000, resetTimeout: 30000 },
+
+      async () => {
+        const enhancedHeaders = {
+          ...headers,
+          'x-user-id': userInfo?.userId ?? '',
+          'x-user-email': userInfo?.email ?? '',
+          'x-user-role': userInfo?.role ?? '',
+        }
+
+        const response = await firstValueFrom(
+          this.httpService.request({
+            method,
+            url,
+            data,
+            headers: enhancedHeaders,
+            timeout: service.timeout,
+          }),
+        )
+        return response
+      },
+
+      () => {
+        throw new Error(
+          `${String(serviceName)} service is temporarily unavailable`,
+        )
+      },
+    )
   }
 
   async getServiceHealth(serviceName: keyof ReturnType<typeof serviceConfig>) {
