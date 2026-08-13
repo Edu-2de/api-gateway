@@ -2,6 +2,7 @@ import { AuthService } from '@/auth/auth.service'
 import { Body, Controller, HttpCode, Post } from '@nestjs/common'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Throttle } from '@nestjs/throttler'
+import { Public } from './decorators/public.decorator'
 import { LoginDto } from './dtos/login.dto'
 import { RegisterDto } from './dtos/register.dto'
 
@@ -16,6 +17,7 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @Throttle({ short: { limit: 5, ttl: 60000 } })
+  @Public()
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto)
   }

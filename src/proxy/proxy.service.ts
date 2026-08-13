@@ -94,5 +94,33 @@ export class ProxyService {
     serviceName: string,
     method: string,
     path: string,
-  ) {}
+  ) {
+    switch (serviceName) {
+      case 'users':
+        if (path.includes('/auth/login')) {
+          return this.defaultFallbackService.createErrorFallback(
+            'users',
+            'Authentication service unavailable',
+          )
+        }
+      case 'product':
+        if (method.toLowerCase() === 'get') {
+          return this.cacheFallbackService.createCacheFallback(
+            `products-${path}`,
+            { products: [], total: 0, page: 1, limit: 10 },
+          )
+        }
+        return this.defaultFallbackService.createDefaultFallback(
+          'products',
+          'Product service unavailable',
+        )
+      case 'checkout':
+      case 'payments':
+      default:
+        return this.defaultFallbackService.createErrorFallback(
+          serviceName,
+          `Service unavailable`,
+        )
+    }
+  }
 }
