@@ -1,4 +1,6 @@
 import { CircuitBreakerService } from '@/common/circuit-breaker/circuit-breaker.service'
+import { CacheFallabackService } from '@/common/fallback/cache-fallback.service'
+import { DefaultFallbackService } from '@/common/fallback/default-fallback.service'
 import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { Method } from 'axios'
@@ -20,6 +22,8 @@ export class ProxyService {
     private readonly httpService: HttpService,
     private readonly envService: EnvService,
     private readonly circuitBreakerService: CircuitBreakerService,
+    private readonly cacheFallbackService: CacheFallabackService,
+    private readonly defaultFallbackService: DefaultFallbackService,
   ) {}
 
   async proxyRequest(
@@ -35,6 +39,8 @@ export class ProxyService {
     const url = `${service.url}${path}`
 
     this.logger.log(`Proxying ${method} request to ${serviceName}: ${url}`)
+
+    const fallback = this.defaultFallbackService.createDefaultFallback
 
     return this.circuitBreakerService.executeWithCircuitBreaker(
       `proxy-${serviceName}`,
@@ -83,4 +89,10 @@ export class ProxyService {
       return { status: 'unhealthy', error: (error as Error).message }
     }
   }
+
+  private createServiceFallback(
+    serviceName: string,
+    method: string,
+    path: string,
+  ) {}
 }
