@@ -1,4 +1,4 @@
-import { LogginMiddleware } from './loggin.middleware'
+import { LogginMiddleware } from '../health/loggin.middleware'
 
 describe('LogginMiddleware', () => {
   it('should be defined', () => {
