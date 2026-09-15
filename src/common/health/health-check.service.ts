@@ -4,7 +4,7 @@ import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { firstValueFrom, timeout } from 'rxjs'
 import { CircuitBreakerService } from '../circuit-breaker/circuit-breaker.service'
-import { HealthService, ServiceHealth } from './health-check'
+import { HealthStatus, ServiceHealth } from './health-check'
 
 @Injectable()
 export class HealthCheckService {
@@ -50,7 +50,7 @@ export class HealthCheckService {
       const serviceHealth: ServiceHealth = {
         name: serviceName as string,
         url: service.url,
-        status: HealthService.HEALTHY,
+        status: HealthStatus.HEALTHY,
         responseTime,
         lastCheck: new Date(),
       }
@@ -63,7 +63,7 @@ export class HealthCheckService {
       const serviceHealth: ServiceHealth = {
         name: serviceName as string,
         url: service.url,
-        status: HealthService.UNHEALTHY,
+        status: HealthStatus.UNHEALTHY,
         responseTime,
         lastCheck: new Date(),
       }
@@ -99,7 +99,7 @@ export class HealthCheckService {
         return {
           name: services[index],
           url: serviceConfig[services[index]].url,
-          status: HealthService.UNHEALTHY as const,
+          status: HealthStatus.UNHEALTHY as const,
           responseTime: 0,
           lastCheck: new Date(),
           error: result.reason?.message || 'Unknown error',

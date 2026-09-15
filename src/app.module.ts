@@ -11,6 +11,10 @@ import { MiddlewareModule } from './common/middlewares/middleware.module'
 import { envSchema } from './env/env'
 import { EnvModule } from './env/env.module'
 import { ProxyModule } from './proxy/proxy.module'
+import { HealthModule } from './health/health.module'
+import { HealthCheckModule } from './common/health/health-check.module'
+import { FallbackModule } from './common/fallback/fallback.module'
+import { CircuitBreakerModule } from './common/circuit-breaker/circuit-breaker.module'
 
 @Module({
   imports: [
@@ -43,6 +47,10 @@ import { ProxyModule } from './proxy/proxy.module'
     ProxyModule,
     MiddlewareModule,
     AuthModule,
+    HealthModule,
+    HealthCheckModule,
+    FallbackModule,
+    CircuitBreakerModule,
   ],
   controllers: [AppController],
   providers: [

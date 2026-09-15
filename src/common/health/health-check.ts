@@ -1,4 +1,4 @@
-export enum HealthService {
+export enum HealthStatus {
   HEALTHY = 'healthy',
   UNHEALTHY = 'unhealthy',
   DEGRADED = 'degraded',
@@ -7,7 +7,7 @@ export enum HealthService {
 export interface ServiceHealth {
   name: string
   url: string
-  status: HealthService
+  status: HealthStatus
   responseTime: number
   lastCheck: Date
   error?: Error
